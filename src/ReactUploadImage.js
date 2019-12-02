@@ -80,8 +80,8 @@ class ReactUploadImage extends React.Component {
           <button type="submit">Upload</button>
         </form>
 
-        {/* {this.state.data.length < 1 ? (
-          <div style={{paddingTop:"50px"}}>Upload Data Again</div> */}
+        {this.state.data.length < 1 ? (
+          <div style={{paddingTop:"50px"}}></div>
         ) : (
           <div
             style={{
