@@ -1,4 +1,4 @@
-Click The Image: 
+Click The Image Below for Demo:  
 
 [<img src="https://www.funavry.com/wp-content/uploads/2018/01/ocr-1.jpg" width="50%">](https://vimeo.com/376882469)
 
