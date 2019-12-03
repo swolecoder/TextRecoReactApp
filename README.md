@@ -1,5 +1,7 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+[<img src="https://www.funavry.com/wp-content/uploads/2018/01/ocr-1.jpg" width="50%">](https://vimeo.com/376882469)
+
 ## Available Scripts
 
 In the project directory, you can run:
