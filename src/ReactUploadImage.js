@@ -1,5 +1,6 @@
 import React from "react";
 import JSONPretty from "react-json-pretty";
+import "react-json-pretty/themes/monikai.css";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 const axios = require("axios");
 var JSONPrettyMon = require("react-json-pretty/dist/monikai");
@@ -10,42 +11,46 @@ class ReactUploadImage extends React.Component {
     this.state = {
       file: null,
       data: [],
-      display:false
+      display: false,
+      classificationData: []
     };
     this.onFormSubmit = this.onFormSubmit.bind(this);
     this.onChange = this.onChange.bind(this);
   }
 
   componentWillUpdate() {
-    //https://techrecobackend.herokuapp.com/  || http://localhost:3000/text
+    //https://techrecobackend.herokuapp.com/text  || http://localhost:3000/text
     axios
-      .get("https://techrecobackend.herokuapp.com/text")
+      .get("http://localhost:3000/text")
 
       .then(res => {
+        console.log(res.data);
         let d = res.data.filter(e => {
           delete e["_id"];
           delete e["__v"];
           return e;
         });
+
         let length = 0;
         let displayData = "";
+        let classification = [];
         let e = d.forEach(e => {
           if (e["image"].length > length) {
             displayData = "";
             length = e["image"].length;
             displayData = e["image"];
+            classification = [];
+            classification = e["classification"];
           }
         });
         this.setState({ display: true });
+        this.setState({ classificationData: classification });
         return this.setState({ data: displayData });
       })
       .catch(function(error) {
-        // handle error
         console.log(error);
       })
-      .finally(function() {
-        // always executed
-      });
+      .finally(function() {});
   }
 
   onFormSubmit(e) {
@@ -57,8 +62,9 @@ class ReactUploadImage extends React.Component {
         "content-type": "multipart/form-data"
       }
     };
+    //https://techrecobackend.herokuapp.com/text/upload
     axios
-      .post("https://techrecobackend.herokuapp.com/text/upload", formData, config)
+      .post("http://localhost:3000/text/upload", formData, config)
       .then(response => {
         alert("The file is successfully uploaded");
       })
@@ -71,7 +77,22 @@ class ReactUploadImage extends React.Component {
   }
 
   render() {
-    console.log(this.state.data)
+    var documents = [
+      {
+        classification: "NaturalReader",
+        content: '"Listen to PDF, Books,\\nand Webpages.\\nNaturalReader\\n"'
+      },
+      {
+        classification: "ALBERT EINSTEIN",
+        content:
+          '"LIFE IS LIKE RIDING A\\nBICYCLE. TO KEEP YOUR\\nBALANCE YOU MUST\\nKEEP MOVING.\\nALBERT EINSTEIN\\n"'
+      },
+      {
+        classification: "area-filling",
+        content:
+          '"I am curious about\\narea-filling text\\nrendering options\\n"'
+      }
+    ];
     return (
       <div>
         <form onSubmit={this.onFormSubmit}>
@@ -81,7 +102,7 @@ class ReactUploadImage extends React.Component {
         </form>
 
         {this.state.data.length < 1 ? (
-          <div style={{paddingTop:"50px"}}></div>
+          <div style={{ paddingTop: "50px" }}></div>
         ) : (
           <div
             style={{
@@ -91,11 +112,38 @@ class ReactUploadImage extends React.Component {
               alignItems: "center"
             }}
           >
-            <h1>Text-Recognition</h1>
+            <h2>Text-Recognition</h2>
             <br />
-            {this.state.display && JSON.stringify(this.state.data).replace(/[\n\r]/g,' ')}
+            {this.state.display && JSON.stringify(this.state.data)}
           </div>
         )}
+
+        <div>
+          <h2>
+            {this.state.classificationData.length > 0 && "Classification Data"}
+          </h2>
+          {this.state.classificationData.length > 0 && (
+            <JSONPretty
+              id="json-pretty"
+              theme={JSONPrettyMon}
+              style={{ fontSize: "1.1em" }}
+              data={this.state.classificationData}
+              mainStyle="padding:1em"
+              valueStyle="font-size:1.5em"
+            ></JSONPretty>
+          )}
+          <div>
+            <h2>Pre-Defined Classification Data</h2>
+            <JSONPretty
+              id="json-pretty"
+              theme={JSONPrettyMon}
+              style={{ fontSize: "1.1em" }}
+              data={documents}
+              mainStyle="padding:1em"
+              valueStyle="font-size:1.5em"
+            ></JSONPretty>
+          </div>
+        </div>
       </div>
     );
   }
